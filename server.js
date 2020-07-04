@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var answer = "";
+
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -23,7 +23,7 @@ function inputData() {
       {
         name: "type",
         type: "rawlist",
-        message: "What would you like to add?",
+        message: "What area would you like to add data to?",
         choices: ["department", "employee", "role", "exit"]
       },
 
@@ -73,95 +73,120 @@ function addDepartment() {
 
       )
     })
-  }
-  function addRole() {
-    inquirer
-      .prompt([{
-        name: "title",
-        type: "input",
-        message: "What is the title?"
+}
+function addRole() {
+  inquirer
+    .prompt([{
+      name: "title",
+      type: "input",
+      message: "What is the title?"
 
-      },
-      {
-        name: "salary",
-        type: "input",
-        message: "What is the employee's salary?"
+    },
+    {
+      name: "salary",
+      type: "input",
+      message: "What is the employee's salary?"
 
-      },
-      {
-        name: "department_id",
-        type: "input",
-        message: "What is the department_id?"
+    },
+    {
+      name: "department_id",
+      type: "input",
+      message: "What is the department_id?"
+    }
 
-      },
-
-      ])
-      .then(answers => {
-
-      })
-  }
-
-  function addEmployee() {
-    var query = connection.query("SELECT title FROM roles", (err, data) => {
-      inquirer
-        .prompt([{
-          name: "first_name",
-          type: "input",
-          message: "What is the employee's first name?"
-
-        },
+    ])
+    .then(answer => {
+      var query = connection.query(
+        "INSERT INTO roles SET ?",
         {
-          name: "last_name",
-          type: "input",
-          message: "What is the employee's last name?"
+          title: answer.title,
+          salary: answer.salary,
+          department_id: answer.department_id
         },
-        {
-          name: "role",
-          type: "rawlist",
-          message: "What is the employee,s role?",
-          choices: data
-        },
-        ])
-        .then(answers => {
+        () => {
+          inputData()
+        }
 
-        })
+      )
     })
+}
+
+function addEmployee() {
+  inquirer
+    .prompt([{
+      name: "first_name",
+      type: "input",
+      message: "What is the employee's first name?"
+
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "What is the employee's last name?"
+    },
+    {
+      name: "role_id",
+      type: "input",
+      message: "What is the employee,s role id number?",
+    },
+    {
+      name: "manager_id",
+      type: "input",
+      message: "What is the manager's id?",
+    },
+    ])
+    .then(answer => {
+      var query = connection.query(
+        "INSERT INTO employee SET ?",
+        {
+          first_name: answer.first_name,
+          last_name: answer.last_name,
+          role_id: answer.role_id,
+          manager_id: answer.manager_id
+        },
+        () => {
+          inputData()
+        }
+
+      )
+    })
+}
 
 
 
-    // console.log("Inserting a new Info...\n");
-    // var query = connection.query(
-    //   "INSERT INTO employee SET ?",
-    //   {
-    //     first_name: answer.first_name,
-    //     last_name: answer.last_name,
-    //     role_id: answer.role_id,
-    //     manager_id: answer.manager_id
-    //   },
+  // console.log("Inserting a new Info...\n");
+  // var query = connection.query(
+  //   "INSERT INTO employee SET ?",
+  //   {
+  //     first_name: answer.first_name,
+  //     last_name: answer.last_name,
+  //     role_id: answer.role_id,
+  //     manager_id: answer.manager_id
+  //   },
 
-    //   function (err, res) {
-    //     if (err) throw err;
-    //     console.log(res.affectedRows + " product inserted!\n");
-    //     // Call updateEmployee AFTER the INSERT completes
-    //     updateEmployee();
-    //   }
-    // );
+  //   function (err, res) {
+  //     if (err) throw err;
+  //     console.log(res.affectedRows + " product inserted!\n");
+  //     // Call updateEmployee AFTER the INSERT completes
+  //     updateEmployee();
+  //   }
+  // );
 
-    // logs the actual query being run
-    console.log(query.sql);
-  }
+  // logs the actual query being run
+  // console.log(query.sql);
 
-  function updateEmployee() {
-    console.log("Updating updating employee info...\n");
-    var query = connection.query(
-      "UPDATE employee SET ? WHERE first_name = ? AND last_name = ?", [{ role_id: 1 }], 'john', 'Brown',
 
-      function (err, res) {
-        if (err) throw err;
-        console.log(res.affectedRows + " employee updated!\n");
-      }
-    );
+// function updateEmployee() {
+//   console.log("Updating updating employee info...\n");
+//   var query = connection.query(
+//     "UPDATE employee SET ? WHERE first_name = ? AND last_name = ?", [{ role_id: answer.role_id }], '', '',
 
-    // logs the actual query being run
-    console.log(query.sql);
-  }
+//     function (err, res) {
+//       if (err) throw err;
+//       console.log(res.affectedRows + " employee updated!\n");
+//     }
+//   );
+
+//   // logs the actual query being run
+//   console.log(query.sql);
+// }
