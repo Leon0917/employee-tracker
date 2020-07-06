@@ -168,6 +168,21 @@ function addEmployee() {
     })
 }
 
+// View departments
+function viewEmployees() {
+  console.log("Viewing all products...\n");
+  connection.query("SELECT * FROM employee", function(err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.log(res);
+    () => {
+      inputData()
+    }
+
+  });
+}
+
+
 //  Update a department
 function updateEmployeesRole() {
   inquirer
