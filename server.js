@@ -1,6 +1,8 @@
 var mysql = require("mysql");
+
 var inquirer = require("inquirer");
 
+// connect to database
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -16,6 +18,12 @@ var connection = mysql.createConnection({
   database: "employee_managementDB"
 });
 
+// connect to the mysql server and sql database
+connection.connect(function(err) {
+  if (err) throw err;
+  // run the start function after the connection is made to prompt the user
+  inputData();
+});
 
 function inputData() {
   inquirer
@@ -23,8 +31,8 @@ function inputData() {
       {
         name: "type",
         type: "rawlist",
-        message: "What area would you like to add data to?",
-        choices: ["department", "employee", "role", "exit"]
+        message: "What would you like to do?",
+        choices: ["addDepartment", "addEmployee", "addRole", "viewDepartments", "viewRoles", "viewEmployees", "updateEmployeesRole", "exit"]
       },
 
     ])
@@ -39,17 +47,24 @@ function inputData() {
       else if (answer.type === "role") {
         addRole();
       }
+      else if (answer.type === "ViewDepartment") {
+        viewDepartments();
+      }
+      else if (answer.type === "viewRole") {
+        viewRole();
+      }
+      else if (answer.type === "viewEmployees") {
+        viewEmployees();
+      }
+      else if (answer.type === "updateEmployeesRole") {
+        updateEmployeesRole();
+      }
       else {
         connection.end();
       }
     });
 }
 
-connection.connect(function (err) {
-  if (err) throw err;
-  console.log("connected as id " + connection.threadId + "\n");
-  inputData();
-});
 
 function addDepartment() {
   inquirer
@@ -74,6 +89,7 @@ function addDepartment() {
       )
     })
 }
+
 function addRole() {
   inquirer
     .prompt([{
@@ -152,41 +168,44 @@ function addEmployee() {
     })
 }
 
+//  Update a department
+function updateEmployeesRole() {
+  inquirer
+    .prompt([{
+      name: "first_name",
+      type: "input",
+      message: "What is the first name of the employee you want to update?"
 
+    },
+    {
+      name: "last_name",
+      type: "input",
+      message: "What is the last name of the employee you would to update?"
+    },
+    {
+      name: "role_id",
+      type: "input",
+      message: "What is the updated role id number?",
+    },
+    {
+      name: "manager_id",
+      type: "input",
+      message: "What is the updated manager's id?",
+    },
+    ])
+    .then(answer => {
+      var query = connection.query(
+        "UPDATE INTO emplyoyee SET ? WHERE ?",
+        {
+          first_name: answer.first_name,
+          last_name: answer.last_name,
+          role_id: answer.role_id,
+          manager_id: answer.manager_id
+        },
+        () => {
+          inputData()
+        }
 
-  // console.log("Inserting a new Info...\n");
-  // var query = connection.query(
-  //   "INSERT INTO employee SET ?",
-  //   {
-  //     first_name: answer.first_name,
-  //     last_name: answer.last_name,
-  //     role_id: answer.role_id,
-  //     manager_id: answer.manager_id
-  //   },
-
-  //   function (err, res) {
-  //     if (err) throw err;
-  //     console.log(res.affectedRows + " product inserted!\n");
-  //     // Call updateEmployee AFTER the INSERT completes
-  //     updateEmployee();
-  //   }
-  // );
-
-  // logs the actual query being run
-  // console.log(query.sql);
-
-
-// function updateEmployee() {
-//   console.log("Updating updating employee info...\n");
-//   var query = connection.query(
-//     "UPDATE employee SET ? WHERE first_name = ? AND last_name = ?", [{ role_id: answer.role_id }], '', '',
-
-//     function (err, res) {
-//       if (err) throw err;
-//       console.log(res.affectedRows + " employee updated!\n");
-//     }
-//   );
-
-//   // logs the actual query being run
-//   console.log(query.sql);
-// }
+      )
+    })
+}

@@ -9,7 +9,11 @@ INSERT INTO department (name) VALUES ('Bar');
 INSERT INTO department (name) VALUES ('Restaurant');
 INSERT INTO department (name) VALUES ('Kitchen');
 
+
+
 INSERT INTO roles (title, salary, department_id) VALUES ('Treehouse', 850, 42);
+INSERT INTO roles (title, salary, department_id) VALUES ('Rock House', 1250, 12);
+INSERT INTO roles (title, salary, department_id) VALUES ('Moondance', 750, 37);
 
 
 
