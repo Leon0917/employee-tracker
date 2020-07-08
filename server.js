@@ -19,7 +19,7 @@ var connection = mysql.createConnection({
 });
 
 // connect to the mysql server and sql database
-connection.connect(function(err) {
+connection.connect(function (err) {
   if (err) throw err;
   // run the start function after the connection is made to prompt the user
   inputData();
@@ -32,31 +32,31 @@ function inputData() {
         name: "type",
         type: "rawlist",
         message: "What would you like to do?",
-        choices: ["addDepartment", "addEmployee", "addRole", "viewDepartments", "viewRoles", "viewEmployees", "updateEmployeesRole", "exit"]
+        choices: ["Add a department", "Add employee", "Add a role", "View all departments", "View all roles", "View all employees", "Update employee's role", "exit"]
       },
 
     ])
     .then(function (answer) {
       // based on their answer, the correspondig function will be called
-      if (answer.type === "department") {
+      if (answer.type === "Add a department") {
         addDepartment();
       }
-      else if (answer.type === "employee") {
+      else if (answer.type === "Add employee") {
         addEmployee();
       }
-      else if (answer.type === "role") {
+      else if (answer.type === "Add a role") {
         addRole();
       }
-      else if (answer.type === "ViewDepartment") {
+      else if (answer.type === "View all departments") {
         viewDepartments();
       }
-      else if (answer.type === "viewRole") {
-        viewRole();
+      else if (answer.type === "View all roles") {
+        viewRoles();
       }
-      else if (answer.type === "viewEmployees") {
+      else if (answer.type === "View all employees") {
         viewEmployees();
       }
-      else if (answer.type === "updateEmployeesRole") {
+      else if (answer.type === "Update employee's role") {
         updateEmployeesRole();
       }
       else {
@@ -65,7 +65,7 @@ function inputData() {
     });
 }
 
-
+// Adding employees, roles and departments
 function addDepartment() {
   inquirer
     .prompt([{
@@ -168,17 +168,38 @@ function addEmployee() {
     })
 }
 
-// View departments
+// View departments, emplyees and roles
 function viewEmployees() {
-  console.log("Viewing all products...\n");
-  connection.query("SELECT * FROM employee", function(err, res) {
+  console.log("Viewing all employees...\n");
+  connection.query("SELECT * FROM employee", function (err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    res.forEach(row=>{
+      console.log( row.id, row.first_name, row.last_name, row.role_id, row.manager_id)
+    }) 
+    inputData() 
+  });
+ 
+  
+}
+
+function viewRoles() {
+  console.log("Viewing all emploeyee role...\n");
+  connection.query("SELECT * FROM roles", function (err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
     console.log(res);
-    () => {
       inputData()
-    }
+  });
+}
 
+function viewDepartments() {
+  console.log("Viewing all departments...\n");
+  connection.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
+    // Log all results of the SELECT statement
+    console.log(res);
+      inputData()
   });
 }
 
@@ -210,13 +231,16 @@ function updateEmployeesRole() {
     ])
     .then(answer => {
       var query = connection.query(
-        "UPDATE INTO emplyoyee SET ? WHERE ?",
+        "UPDATE employee SET ? WHERE first_name = ? AND last_name = ?",[
         {
-          first_name: answer.first_name,
-          last_name: answer.last_name,
+         
           role_id: answer.role_id,
           manager_id: answer.manager_id
         },
+
+           answer.first_name,
+           answer.last_name
+      ],
         () => {
           inputData()
         }
