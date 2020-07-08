@@ -175,7 +175,7 @@ function viewEmployees() {
     if (err) throw err;
     // Log all results of the SELECT statement
     res.forEach(row=>{
-      console.log( row.id, row.first_name, row.last_name, row.role_id, row.manager_id)
+      console.table(res)
     }) 
     inputData() 
   });
@@ -188,7 +188,7 @@ function viewRoles() {
   connection.query("SELECT * FROM roles", function (err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
-    console.log(res);
+    console.table(res);
       inputData()
   });
 }
@@ -198,7 +198,7 @@ function viewDepartments() {
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
-    console.log(res);
+    console.table(res);
       inputData()
   });
 }
